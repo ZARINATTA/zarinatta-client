@@ -20,6 +20,5 @@ interface SearchPageParams extends PageProps {
 }
 
 export default function SearchPage({ searchParams }: SearchPageParams) {
-  console.log(searchParams);
   return <div>열차조회 페이지</div>;
 }
