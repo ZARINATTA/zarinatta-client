@@ -1,4 +1,6 @@
+import { Flex } from 'antd';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: '열차조회',
@@ -10,5 +12,10 @@ export default function SearchLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return (
+    <Flex vertical align="center">
+      <Image src="/banner.svg" alt="자리나따 배너 이미지" width={1280} height={387} />
+      <div>{children}</div>
+    </Flex>
+  );
 }
