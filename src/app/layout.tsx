@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import '../static/css/reset.css';
+import PageWithHeader from '@/components/header/PageWithHeader';
 
 export const metadata: Metadata = {
   title: '자리나따',
@@ -23,7 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={pretendard.variable}>
-        <AntdRegistry>{children}</AntdRegistry>
+        <AntdRegistry>
+          <PageWithHeader>{children}</PageWithHeader>
+        </AntdRegistry>
       </body>
     </html>
   );
