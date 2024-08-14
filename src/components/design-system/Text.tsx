@@ -20,7 +20,7 @@ type TextType =
 interface TextProps {
   children: ReactNode;
   type: TextType;
-  colorType?: ColorType;
+  colorType?: ColorType | 'white';
 }
 
 const FONT_WEIGHT = {
@@ -38,7 +38,7 @@ export default function Text({ type, children, colorType = 'gray950' }: TextProp
       style={{
         fontWeight: FONT_WEIGHT[weight as keyof typeof FONT_WEIGHT],
         fontSize: `${size}px`,
-        color: color[colorType],
+        color: colorType === 'white' ? 'white' : color[colorType],
       }}
     >
       {children}
