@@ -19,7 +19,7 @@ type TextType =
 
 interface TextProps {
   children: ReactNode;
-  type: TextType;
+  type?: TextType;
   colorType?: ColorType | 'white';
 }
 
@@ -30,7 +30,7 @@ const FONT_WEIGHT = {
   bold: 700,
 };
 
-export default function Text({ type, children, colorType = 'gray950' }: TextProps) {
+export default function Text({ type = 'regular-14', children, colorType = 'gray950' }: TextProps) {
   const [weight, size] = type.split('-');
 
   return (

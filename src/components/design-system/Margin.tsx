@@ -4,12 +4,6 @@ interface MarginProps {
   size: number;
 }
 
-export default function Margin({ vertical = true, horizontal, size }: MarginProps) {
-  return (
-    <div
-      style={
-        vertical ? { marginTop: size } : horizontal ? { marginRight: size } : { marginTop: size }
-      }
-    />
-  );
+export default function Margin({ vertical, horizontal, size }: MarginProps) {
+  return <div style={{ marginTop: vertical ? size : 0, marginRight: horizontal ? size : 0 }} />;
 }
