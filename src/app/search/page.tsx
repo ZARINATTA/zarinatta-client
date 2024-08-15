@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { PageProps } from '../../../.next/types/app/layout';
 
 // TODO: startDate, endDate 얘네 특정한 포맷으로 받도록 타입 강제할지 고민해보기
@@ -20,5 +21,10 @@ interface SearchPageParams extends PageProps {
 }
 
 export default function SearchPage({ searchParams }: SearchPageParams) {
-  return <div>열차조회 페이지</div>;
+  return (
+    <div>
+      <Image src="/banner.svg" alt="자리나따 배너 이미지" width={1280} height={387} />
+      열차조회 페이지
+    </div>
+  );
 }
