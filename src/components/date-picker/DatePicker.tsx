@@ -14,15 +14,30 @@ type Range<N extends number, Result extends Array<unknown> = []> = Result['lengt
 type Date = Range<31> extends infer R ? Exclude<R, 0> : never;
 type Month = Range<12> extends infer R ? Exclude<R, 0> : never;
 
-interface DatePickerProps {
+interface DatePickerCoreProps {
   year: number;
   startMonth?: Month;
   startDate?: Date;
   endMonth?: Month;
   endDate?: Date;
+  multiple?: boolean;
+}
+
+interface SingleDatePickerProps extends DatePickerCoreProps {
   setSelectedDate: (selectedDate: number) => void;
   selectedDate: number;
+  multiple?: false;
+  maxCount?: undefined;
 }
+
+interface MultipleDatePickerProps extends DatePickerCoreProps {
+  setSelectedDate: (selectedDate: number[]) => void;
+  selectedDate: number[];
+  multiple: true;
+  maxCount?: number;
+}
+
+type DatePickerProps = SingleDatePickerProps | MultipleDatePickerProps;
 
 export default function DatePicker({
   year = dayjs().year(),
@@ -32,7 +47,10 @@ export default function DatePicker({
   endDate,
   setSelectedDate,
   selectedDate,
+  multiple,
+  maxCount,
 }: DatePickerProps) {
+  // TODO: JSX에서 사용되는 값만 남기고 나머지 정리하기
   const endDateOfMonth = useMemo(
     () => dayjs(`${year}-${startMonth}-${startDate}`).endOf('month').date(),
     [year, startMonth, startDate]
@@ -42,6 +60,52 @@ export default function DatePicker({
     () => Array.from({ length: endDateOfMonth }).map((_, i) => i + 1),
     [endDateOfMonth]
   );
+  const dateCells = useMemo(
+    () => [...Array.from({ length: startDayOfMonth }).map(() => 0), ...datesOfMonth],
+    [startDayOfMonth, datesOfMonth]
+  );
+  const dateRows = useMemo(
+    () =>
+      dateCells.reduce((prev, cur, i) => {
+        const index = Math.floor(i / 7);
+        if (Array.isArray(prev[index])) prev[index].push(cur);
+        else prev[index] = [cur];
+        return prev;
+      }, [] as number[][]),
+    [dateCells]
+  );
+
+  const selectDate = (date: number) => {
+    if (multiple) {
+      selectMultipleDate(date);
+      return;
+    }
+    selectSingleDate(date);
+  };
+
+  const selectSingleDate = (date: number) => {
+    if (multiple) return;
+
+    if (selectedDate === date) {
+      setSelectedDate(0);
+      return;
+    }
+    setSelectedDate(date);
+  };
+
+  const selectMultipleDate = (date: number) => {
+    if (!multiple) return;
+
+    if (selectedDate.includes(date)) {
+      setSelectedDate(selectedDate.filter((d) => d !== date));
+      return;
+    }
+
+    // 최대 선택 가능 개수가 지정되면 더이상 날짜를 선택하지 않는다.
+    if (maxCount !== undefined && maxCount <= selectedDate.length) return;
+
+    setSelectedDate([...selectedDate, date]);
+  };
 
   return (
     <Flex vertical>
@@ -58,30 +122,28 @@ export default function DatePicker({
               </DateCell>
             ))}
           </Flex>
-          {[...Array.from({ length: startDayOfMonth }).map(() => 0), ...datesOfMonth]
-            .reduce((prev, cur, i) => {
-              const index = Math.floor(i / 7);
-              if (Array.isArray(prev[index])) prev[index].push(cur);
-              else prev[index] = [cur];
-              return prev;
-            }, [] as number[][])
-            .map((row, i) => (
-              <Flex key={`date-picker-row-${i}`}>
-                {row.map((col, j) => {
-                  return (
-                    <DateCell
-                      key={`date-picker-row-${i}-col-${j}`}
-                      onClick={() => col !== 0 && setSelectedDate(col)}
-                      selected={selectedDate === col}
-                      empty={col === 0}
-                      disabled={col === 0}
-                    >
-                      {col}
-                    </DateCell>
-                  );
-                })}
-              </Flex>
-            ))}
+          {dateRows.map((row, i) => (
+            <Flex key={`date-picker-row-${i}`}>
+              {row.map((col, j) => {
+                return (
+                  <DateCell
+                    key={`date-picker-row-${i}-col-${j}`}
+                    onClick={() => col !== 0 && selectDate(col)}
+                    selected={
+                      col === 0
+                        ? false
+                        : Array.isArray(selectedDate)
+                          ? selectedDate.includes(col)
+                          : selectedDate === col
+                    }
+                    disabled={col === 0}
+                  >
+                    {col === 0 ? '' : col}
+                  </DateCell>
+                );
+              })}
+            </Flex>
+          ))}
         </Flex>
       </Flex>
     </Flex>
@@ -93,7 +155,6 @@ const DateCell = ({
   gray,
   blue,
   selected,
-  empty,
   disabled,
   onClick,
 }: {
@@ -135,7 +196,7 @@ const DateCell = ({
                   : 'gray950'
         }
       >
-        {empty ? '' : children}
+        {children}
       </Text>
     </Flex>
   );

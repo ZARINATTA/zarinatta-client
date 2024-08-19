@@ -7,14 +7,13 @@ const meta = {
   title: 'Example/DatePicker',
   component: DatePicker,
   parameters: {
-    // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
   },
 } satisfies Meta<typeof DatePicker>;
 
 export default meta;
 
-export const DatePickerStory = () => {
+export const singleDatePicker = () => {
   const [selectedDate, setSelectedDate] = useState<number>(0);
 
   return (
@@ -23,6 +22,22 @@ export const DatePickerStory = () => {
       startMonth={2}
       setSelectedDate={setSelectedDate}
       selectedDate={selectedDate}
+    />
+  );
+};
+
+// maxCount 값 컨트롤 패널에서 입력할 수 있도록 수정하기
+export const multipleDatePicker = () => {
+  const [selectedDate, setSelectedDate] = useState<number[]>([]);
+
+  return (
+    <DatePicker
+      year={2024}
+      startMonth={2}
+      setSelectedDate={setSelectedDate}
+      selectedDate={selectedDate}
+      maxCount={3}
+      multiple
     />
   );
 };
