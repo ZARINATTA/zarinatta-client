@@ -16,6 +16,8 @@ import {
 } from '@/utils/search-params';
 import { useSearchRouter } from '@/hooks/use-search-router';
 import { useRouter } from 'next/navigation';
+import { useModalStore } from '@/hooks/use-modal-store';
+import StationSearchModal from '@/components/modal/StationSearchModal';
 
 type Stations = 'KTX' | 'SRT' | 'ITX';
 
@@ -69,6 +71,8 @@ export default function SearchPage() {
   const currentMonth = dayjs().month() + 1;
   const nextMonth = currentMonth + 1 > 12 ? 1 : currentMonth + 1;
 
+  const openModal = useModalStore(({ openModal }) => openModal);
+
   const onSelectDate = (month: number, date: number) => {
     if (month === currentMonth) {
       setCurrentMonthSelectedDate(date);
@@ -81,7 +85,11 @@ export default function SearchPage() {
 
   return (
     <Flex vertical align="center">
-      <Flex justify="center" style={{ width: '100vw', backgroundColor: 'white' }}>
+      <Flex
+        justify="center"
+        style={{ width: '100vw', backgroundColor: 'white' }}
+        onClick={() => openModal(<StationSearchModal />)}
+      >
         <Image src="/banner.svg" alt="자리나따 배너 이미지" width={1280} height={387} />
       </Flex>
       <Margin vertical size={25} />
@@ -132,7 +140,7 @@ export default function SearchPage() {
               <Select
                 variant="borderless"
                 defaultValue={searchParams['departStation']}
-                options={[{ label: '서울역', value: '서울역' }]}
+                options={[{ label: '서울', value: '서울' }]}
                 onSelect={(value) => routeSearchPageWithParams({ departStation: value })}
                 style={{ borderBottom: `2px solid ${color['gray300']}` }}
               />
@@ -145,7 +153,7 @@ export default function SearchPage() {
               <Select
                 variant="borderless"
                 defaultValue={searchParams['arriveStation']}
-                options={[{ label: '부산역', value: '부산역' }]}
+                options={[{ label: '부산', value: '부산' }]}
                 onSelect={(value) => routeSearchPageWithParams({ arriveStation: value })}
                 style={{ borderBottom: `2px solid ${color['gray300']}` }}
               />
@@ -175,7 +183,9 @@ export default function SearchPage() {
                 variant="borderless"
                 defaultValue={searchParams['departTime']}
                 options={departTimeSearchOptions}
-                onSelect={(value) => routeSearchPageWithParams({ departTime: value })}
+                onSelect={(value) =>
+                  routeSearchPageWithParams({ departTime: `${searchParams['departDate']}${value}` })
+                }
                 style={{ borderBottom: `2px solid ${color['gray300']}` }}
               />
             }
