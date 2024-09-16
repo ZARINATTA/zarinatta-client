@@ -5,6 +5,7 @@ import '../static/css/reset.css';
 import PageWithHeader from '@/components/header/PageWithHeader';
 import { Suspense } from 'react';
 import ModalProvider from '@/components/modal/ModalProvider';
+import QueryProvider from '@/components/query-provider/query-provider';
 
 export const metadata: Metadata = {
   title: '자리나따',
@@ -26,13 +27,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={pretendard.variable}>
-        <ModalProvider>
-          <AntdRegistry>
-            <Suspense>
-              <PageWithHeader>{children}</PageWithHeader>
-            </Suspense>
-          </AntdRegistry>
-        </ModalProvider>
+        <QueryProvider>
+          <ModalProvider>
+            <AntdRegistry>
+              <Suspense>
+                <PageWithHeader>{children}</PageWithHeader>
+              </Suspense>
+            </AntdRegistry>
+          </ModalProvider>
+        </QueryProvider>
       </body>
     </html>
   );

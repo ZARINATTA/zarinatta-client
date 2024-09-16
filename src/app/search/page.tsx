@@ -85,11 +85,7 @@ export default function SearchPage() {
 
   return (
     <Flex vertical align="center">
-      <Flex
-        justify="center"
-        style={{ width: '100vw', backgroundColor: 'white' }}
-        onClick={() => openModal(<StationSearchModal />)}
-      >
+      <Flex justify="center" style={{ width: '100vw', backgroundColor: 'white' }}>
         <Image src="/banner.svg" alt="자리나따 배너 이미지" width={1280} height={387} />
       </Flex>
       <Margin vertical size={25} />
@@ -137,26 +133,40 @@ export default function SearchPage() {
             icon="start-station"
             title="출발하시는 역을 선택해주세요."
             selectComponent={
-              <Select
-                variant="borderless"
-                defaultValue={searchParams['departStation']}
-                options={[{ label: '서울', value: '서울' }]}
-                onSelect={(value) => routeSearchPageWithParams({ departStation: value })}
-                style={{ borderBottom: `2px solid ${color['gray300']}` }}
-              />
+              <Flex
+                align="center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openModal(<StationSearchModal departOrArrive="depart" />);
+                }}
+                style={{
+                  height: 30,
+                  borderBottom: `2px solid ${color['gray300']}`,
+                  padding: '0 11px',
+                }}
+              >
+                {searchParams['departStation'] ?? <Text colorType={'gray300'}>역 검색</Text>}
+              </Flex>
             }
           />
           <SearchMenu
             icon="end-station"
             title="도착하시는 역을 선택해주세요."
             selectComponent={
-              <Select
-                variant="borderless"
-                defaultValue={searchParams['arriveStation']}
-                options={[{ label: '부산', value: '부산' }]}
-                onSelect={(value) => routeSearchPageWithParams({ arriveStation: value })}
-                style={{ borderBottom: `2px solid ${color['gray300']}` }}
-              />
+              <Flex
+                align="center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openModal(<StationSearchModal departOrArrive="arrive" />);
+                }}
+                style={{
+                  height: 30,
+                  borderBottom: `2px solid ${color['gray300']}`,
+                  padding: '0 11px',
+                }}
+              >
+                {searchParams['arriveStation'] ?? <Text colorType={'gray300'}>역 검색</Text>}
+              </Flex>
             }
           />
         </Flex>
@@ -183,9 +193,7 @@ export default function SearchPage() {
                 variant="borderless"
                 defaultValue={searchParams['departTime']}
                 options={departTimeSearchOptions}
-                onSelect={(value) =>
-                  routeSearchPageWithParams({ departTime: `${searchParams['departDate']}${value}` })
-                }
+                onSelect={(value) => routeSearchPageWithParams({ departTime: value })}
                 style={{ borderBottom: `2px solid ${color['gray300']}` }}
               />
             }
@@ -205,7 +213,11 @@ export default function SearchPage() {
           border: 'none',
           cursor: 'pointer',
         }}
-        onClick={() => router.push(`/search/result?${getSearchURLFromObject({ ...searchParams })}`)}
+        onClick={() =>
+          router.push(
+            `/search/result?${getSearchURLFromObject({ ...searchParams, departTime: `${searchParams['departDate']}${searchParams['departTime']}` })}`
+          )
+        }
       >
         <Text type="semiBold-20" colorType={isAllRequiredFieldSelected ? 'white' : 'primary200'}>
           열차 조회하기
