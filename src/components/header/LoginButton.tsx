@@ -10,7 +10,7 @@ export default function LoginButton() {
   const redirectToLoginPage = () => {
     if (redirectUri === undefined) return;
 
-    sessionStorage.setItem('pageUrlBeforeClickLoginButton', window.location.href);
+    sessionStorage.setItem('pathNameBeforeClickLoginButton', window.location.pathname);
     router.push(redirectUri);
   };
 

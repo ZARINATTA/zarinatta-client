@@ -1,6 +1,6 @@
 'use client';
 
-import { useSignUpQuery } from '@/hooks/query/login';
+import { useLoginMutation, useSignUpQuery } from '@/hooks/query/login';
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 
@@ -8,12 +8,17 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
-  const { data } = useSignUpQuery(code ?? '');
-  const pageUrlBeforeClickLoginButton = sessionStorage.getItem('pageUrlBeforeClickLoginButton');
+  const { data: signUpQueryData } = useSignUpQuery(code ?? '');
+  const loginMutation = useLoginMutation(() => router.push(pathNameBeforeClickLoginButton ?? '/'));
+  const pathNameBeforeClickLoginButton = sessionStorage.getItem('pathNameBeforeClickLoginButton');
 
-  if (data !== undefined && pageUrlBeforeClickLoginButton !== null) {
-    sessionStorage.setItem('refreshToken', data.refreshToken);
-    router.push(pageUrlBeforeClickLoginButton);
+  if (signUpQueryData?.status === 409) {
+    loginMutation.mutate(sessionStorage.getItem('refreshToken') ?? '');
+  }
+
+  if (signUpQueryData !== undefined && signUpQueryData.data !== undefined) {
+    sessionStorage.setItem('refreshToken', signUpQueryData.data.refreshToken);
+    router.push(pathNameBeforeClickLoginButton ?? '/');
   }
 
   return <>로그인중...</>;
