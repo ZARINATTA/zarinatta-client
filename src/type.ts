@@ -3,7 +3,7 @@ export interface PaginationResponse {
   totalDataCount: number;
   totalPageCount: number;
 }
-
+ 
 export interface Ticket {
   ticketId: number;
   ticketType: string;
