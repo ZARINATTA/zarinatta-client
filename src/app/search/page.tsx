@@ -21,20 +21,26 @@ import StationSearchModal from '@/components/modal/StationSearchModal';
 
 const minimumRequiredSearchParamKeys = ['departStation', 'arriveStation'] as const;
 
-type Stations = 'KTX' | 'SRT' | 'ITX';
+const ALL_TRAIN_TYPE = 'ALL';
 
-const stationSearchOptions: Record<'label' | 'value', Stations>[] = [
+type TrainType = typeof ALL_TRAIN_TYPE | 'KTX' | 'ITX' | 'SRT';
+
+const trainTypeSearchOptions: { label: string; value: TrainType }[] = [
+  {
+    label: '전체 열차',
+    value: ALL_TRAIN_TYPE,
+  },
   {
     label: 'KTX',
     value: 'KTX',
   },
   {
-    label: 'SRT',
-    value: 'SRT',
-  },
-  {
     label: 'ITX',
     value: 'ITX',
+  },
+  {
+    label: 'SRT',
+    value: 'SRT',
   },
 ];
 
@@ -182,9 +188,15 @@ export default function SearchPage() {
             selectComponent={
               <Select
                 variant="borderless"
-                defaultValue={searchParams['trainType']}
-                options={stationSearchOptions}
-                onSelect={(value) => routeSearchPageWithParams({ trainType: value })}
+                defaultValue={searchParams['trainType'] ?? ALL_TRAIN_TYPE}
+                options={trainTypeSearchOptions}
+                onSelect={(value) => {
+                  if (value === ALL_TRAIN_TYPE) {
+                    routeSearchPageWithoutParams('trainType');
+                    return;
+                  }
+                  routeSearchPageWithParams({ trainType: value });
+                }}
                 style={{ borderBottom: `2px solid ${color['gray300']}` }}
               />
             }
