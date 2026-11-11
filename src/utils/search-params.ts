@@ -5,6 +5,7 @@ export const coreSearchParamKeys = [
   "arriveStation",
   "departTime",
   "departDate",
+  "trainType",
 ];
 const searchParamKeys = [
   ...coreSearchParamKeys,
